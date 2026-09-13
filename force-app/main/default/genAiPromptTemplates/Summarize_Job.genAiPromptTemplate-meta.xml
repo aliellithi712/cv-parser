@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<GenAiPromptTemplate xmlns="http://soap.sforce.com/2006/04/metadata">
+    <activeVersionIdentifier>xDL5HEb0OLIS1Hhx2AwIRSrdQd34HWClsKpq9KnyjC0=_1</activeVersionIdentifier>
+    <description>This will summarize the job requirement and generate the JSON that will store afterwards</description>
+    <developerName>Summarize_Job</developerName>
+    <masterLabel>Summarize Job</masterLabel>
+    <overridable>false</overridable>
+    <templateVersions>
+        <content>You are a high-precision Job Description Extraction Engine. Your task is to extract job requirements from the provided Job Description text into a strictly valid JSON object following the exact JSON schema below.
+
+STRICT INSTRUCTION RULES
+OUTPUT ONLY VALID JSON.
+Do not include markdown code blocks.
+Do not include introductory text, explanations, comments, or trailing notes.
+ABSOLUTE ACCURACY.
+Extract ONLY facts directly stated in the provided text.
+Do NOT hallucinate, infer, assume, or extrapolate requirements.
+MISSING DETAILS.
+If a field is not present, set it to null.
+If a list has no applicable information, return [].
+NEVER omit any key defined in the schema.
+ROLE MAPPING.
+Classify the primary job role into one of the following exact picklist options: &quot;Admin&quot;, &quot;Developer&quot;, &quot;HR&quot;, &quot;Finance&quot;, &quot;Sales&quot;, &quot;Marketing&quot;, &quot;Support&quot;, or &quot;Other&quot;.
+EXPERIENCE.
+Extract minimum years of experience as a decimal number if stated; otherwise, set to null.
+DESIRED EXPERIENCE.
+Extract explicitly stated experience requirements (such as Apex development) into &quot;desiredExperience&quot; as a string. If none, set to null.
+ACHIEVEMENTS / CERTIFICATIONS.
+Extract professional certifications and licenses explicitly stated (such as PDI, PDII) and store them as a flat string array under &quot;desiredAchievements&quot;. If none, return [].
+DESIRED SKILLS.
+Extract explicitly stated technical, domain, or tool skills (such as Apex) and store them as a flat string array under &quot;desiredSkills&quot;. If none, return [].
+
+REQUIRED JSON SCHEMA
+{
+&quot;job&quot;: {
+&quot;jobTitle&quot;: &quot;String | null&quot;,
+&quot;role&quot;: &quot;String | null&quot;,
+&quot;minExperienceYears&quot;: &quot;Number | null&quot;,
+&quot;description&quot;: &quot;String | null&quot;,
+&quot;desiredSkills&quot;: [
+&quot;String&quot;
+],
+&quot;desiredExperience&quot;: &quot;String | null&quot;,
+&quot;desiredEducation&quot;: &quot;String | null&quot;,
+&quot;desiredAchievements&quot;: [
+&quot;String&quot;
+]
+}
+}
+
+INPUT JOB RECORD
+{!$Input:Job_Id.Description__c}
+
+FINAL VALIDATION
+Ensure output is valid JSON, contains no markdown fences, and matches the exact schema keys.
+</content>
+        <fileDroppingStrategy>{&quot;dropFilesBy&quot;:&quot;LAST_MODIFIED_DATE&quot;,&quot;dropFileStartingWith&quot;:&quot;OLDEST&quot;}</fileDroppingStrategy>
+        <inputs>
+            <apiName>Job_Id</apiName>
+            <definition>SOBJECT://Job__c</definition>
+            <masterLabel>Job Id</masterLabel>
+            <referenceName>Input:Job_Id</referenceName>
+            <required>true</required>
+        </inputs>
+        <isCitationEnabled>false</isCitationEnabled>
+        <primaryModel>sfdc_ai__DefaultGPT5Mini</primaryModel>
+        <status>Published</status>
+        <versionIdentifier>xDL5HEb0OLIS1Hhx2AwIRSrdQd34HWClsKpq9KnyjC0=_1</versionIdentifier>
+    </templateVersions>
+    <type>einstein_gpt__flex</type>
+    <visibility>Global</visibility>
+</GenAiPromptTemplate>

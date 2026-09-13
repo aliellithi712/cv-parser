@@ -1,0 +1,28 @@
+{
+  "required" : [ ],
+  "unevaluatedProperties" : false,
+  "properties" : {
+    "contentDocumentId" : {
+      "title" : "Content Document ID",
+      "description" : "Salesforce ContentDocumentId of the uploaded CV/resume",
+      "lightning:type" : "lightning__textType",
+      "lightning:isPII" : false,
+      "copilotAction:isUserInput" : false
+    },
+    "promptTemplateName" : {
+      "title" : "Prompt Template API Name",
+      "description" : "Developer name of the prompt template (Defaults to resumes_parser)",
+      "lightning:type" : "lightning__textType",
+      "lightning:isPII" : false,
+      "copilotAction:isUserInput" : false
+    },
+    "userMessage" : {
+      "title" : "User Input Message",
+      "description" : "The recruiter query or prompt string",
+      "lightning:type" : "lightning__textType",
+      "lightning:isPII" : false,
+      "copilotAction:isUserInput" : false
+    }
+  },
+  "lightning:type" : "lightning__objectType"
+}

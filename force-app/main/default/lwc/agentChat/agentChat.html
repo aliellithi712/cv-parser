@@ -1,0 +1,140 @@
+<template>
+    <lightning-card title="Agentforce Chat Session" icon-name="standard:agent_home">
+        <div class="chat-container">
+            
+            <!-- Chat Message Feed -->
+            <div class="chat-body slds-p-around_small">
+                <template for:each={messages} for:item="msg">
+                    <div key={msg.id} class={msg.senderClass}>
+                        <div class="chat-bubble">
+                            
+                            <!-- Attached File Tag in Message -->
+                            <template if:true={msg.attachmentName}>
+                                <div class="attachment-tag slds-m-bottom_x-small">
+                                    <lightning-icon icon-name="doctype:attachment" size="x-small"></lightning-icon>
+                                    <span class="slds-m-left_xx-small">{msg.attachmentName}</span>
+                                </div>
+                            </template>
+
+                            <p class="chat-text">{msg.text}</p>
+                            <span class="chat-time">{msg.timestamp}</span>
+                        </div>
+                    </div>
+                </template>
+
+                <!-- Agent Typing Indicator -->
+                <template if:true={isThinking}>
+                    <div class="message-row agent">
+                        <div class="chat-bubble thinking">
+                            <lightning-spinner alternative-text="Agent is thinking..." size="small"></lightning-spinner>
+                            <span class="slds-m-left_medium">Agent is thinking...</span>
+                        </div>
+                    </div>
+                </template>
+            </div>
+
+            <!-- Selected File Preview Bar (Before Sending) -->
+            <!-- Selected File Preview Bar (Before Sending) -->
+            <template if:true={attachedFiles.length}>
+                <template for:each={attachedFiles} for:item="file" for:index="index">
+                    <div key={file.documentId} class="attachment-preview slds-p-horizontal_small slds-p-vertical_x-small slds-grid slds-grid_vertical-align-center">
+                        <lightning-icon icon-name="standard:file" size="x-small"></lightning-icon>
+                        <span class="slds-m-left_x-small slds-truncate">{file.name}</span>
+                        <lightning-button-icon 
+                            icon-name="utility:close" 
+                            variant="bare" 
+                            onclick={removeAttachment} 
+                            data-index={index}
+                            class="slds-col_bump-left"
+                            title="Remove file">
+                        </lightning-button-icon>
+                    </div>
+                </template>
+            </template>
+
+            <!-- Chat Footer / Input Controls -->
+            <div class="chat-footer slds-p-around_x-small slds-grid slds-grid_vertical-align-center">
+                
+                <!-- Custom Attach Icon Button (Triggers Modal) -->
+                <lightning-button-icon 
+                    icon-name="utility:attach" 
+                    variant="border-filled" 
+                    onclick={openUploadModal} 
+                    title="Attach File"
+                    alternative-text="Attach File"
+                    class="slds-m-right_x-small">
+                </lightning-button-icon>
+
+                <template lwc:if={isAttachmentEmpty}>
+                    <lightning-input 
+                        type="text" 
+                        variant="label-hidden" 
+                        placeholder="Type a message..." 
+                        value={userMessage}
+                        onchange={handleInputChange}
+                        onkeyup={handleKeyUp}
+                        class="slds-col">
+                    </lightning-input>
+                </template>
+                <template lwc:else>
+                    <div class="slds-col slds-text-color_weak slds-align-middle">
+                        Resume attached. Click Send to parse and save candidate data.
+                    </div>
+                </template>
+
+                <!-- Send Button -->
+                <lightning-button-icon 
+                    icon-name="utility:send" 
+                    variant="brand" 
+                    onclick={handleSend}
+                    class="slds-m-left_x-small"
+                    alternative-text="Send">
+                </lightning-button-icon>
+            </div>
+
+        </div>
+
+        <!-- File Upload Modal -->
+        <template if:true={isModalOpen}>
+            <section role="dialog" tabindex="-1" aria-modal="true" class="slds-modal slds-fade-in-open">
+                <div class="slds-modal__container">
+                    
+                    <!-- Modal Header -->
+                    <header class="slds-modal__header">
+                        <lightning-button-icon 
+                            icon-name="utility:close" 
+                            variant="bare-inv" 
+                            class="slds-modal__close" 
+                            onclick={closeUploadModal} 
+                            title="Close">
+                        </lightning-button-icon>
+                        <h2 class="slds-modal__title slds-hyphenate">Upload File</h2>
+                    </header>
+
+                    <!-- Modal Body with lightning-file-upload -->
+                    <div class="slds-modal__content slds-p-around_medium">
+                        <lightning-file-upload
+                            label="Select Document (PDF, DOC, TXT)"
+                            name="modalFileUploader"
+                            accept={acceptedFormats}
+                            record-id={recordId}
+                            onuploadfinished={handleUploadFinished}
+                            >
+                        </lightning-file-upload>
+                    </div>
+
+                    <!-- Modal Footer -->
+                    <footer class="slds-modal__footer">
+                        <lightning-button 
+                            label="Cancel" 
+                            onclick={closeUploadModal}>
+                        </lightning-button>
+                    </footer>
+
+                </div>
+            </section>
+            <div class="slds-backdrop slds-backdrop_open" role="presentation"></div>
+        </template>
+
+    </lightning-card>
+</template>

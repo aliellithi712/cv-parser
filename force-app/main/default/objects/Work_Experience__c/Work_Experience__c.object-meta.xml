@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObject xmlns="http://soap.sforce.com/2006/04/metadata">
+    <label>Work Experience</label>
+    <pluralLabel>Work Experiences</pluralLabel>
+    <nameField>
+        <displayFormat>WE-{0000}</displayFormat>
+        <label>Work Experience Name</label>
+        <type>AutoNumber</type>
+    </nameField>
+    <deploymentStatus>Deployed</deploymentStatus>
+    <sharingModel>ReadWrite</sharingModel>
+</CustomObject>

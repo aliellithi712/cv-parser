@@ -1,0 +1,14 @@
+{
+  "required" : [ "jobId" ],
+  "unevaluatedProperties" : false,
+  "properties" : {
+    "jobId" : {
+      "title" : "Job ID",
+      "description" : "The ID of the selected job",
+      "lightning:type" : "lightning__recordIdType",
+      "lightning:isPII" : false,
+      "copilotAction:isUserInput" : false
+    }
+  },
+  "lightning:type" : "lightning__objectType"
+}

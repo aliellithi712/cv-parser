@@ -1,0 +1,14 @@
+{
+  "required" : [ "searchName" ],
+  "unevaluatedProperties" : false,
+  "properties" : {
+    "searchName" : {
+      "title" : "searchName",
+      "description" : "This is the name of candidates and resumes names",
+      "lightning:type" : "lightning__textType",
+      "lightning:isPII" : false,
+      "copilotAction:isUserInput" : false
+    }
+  },
+  "lightning:type" : "lightning__objectType"
+}
