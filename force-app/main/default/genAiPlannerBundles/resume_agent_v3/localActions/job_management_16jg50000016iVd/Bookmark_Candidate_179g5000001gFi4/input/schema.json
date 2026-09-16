@@ -1,0 +1,21 @@
+{
+  "required" : [ "candidateId" ],
+  "unevaluatedProperties" : false,
+  "properties" : {
+    "candidateId" : {
+      "title" : "Candidate ID",
+      "description" : "The candidate ID retrieved from the context history",
+      "lightning:type" : "lightning__recordIdType",
+      "lightning:isPII" : false,
+      "copilotAction:isUserInput" : false
+    },
+    "comment" : {
+      "title" : "Comment",
+      "description" : "The comment provided by the user",
+      "lightning:type" : "lightning__textType",
+      "lightning:isPII" : false,
+      "copilotAction:isUserInput" : false
+    }
+  },
+  "lightning:type" : "lightning__objectType"
+}

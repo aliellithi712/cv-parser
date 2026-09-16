@@ -94,10 +94,10 @@ start_agent agent_router:
             |
         actions:
             go_to_list_jobs: @utils.transition to @subagent.CVQuery
-            go_to_cv_parser: @utils.transition to @subagent.listJobs
+            go_to_cv_parser: @utils.transition to @subagent.job_management
             go_to_ambiguous_question: @utils.transition to @subagent.ambiguous_question
             go_to_off_topic: @utils.transition to @subagent.off_topic
-            go_to_Get_Best_candidates: @utils.transition to @subagent.Get_Best_candidates
+            #go_to_Get_Best_candidates: @utils.transition to @subagent.Get_Best_candidates
 
 subagent off_topic:
     label: "Off Topic"
@@ -147,63 +147,73 @@ subagent CVQuery:
     description: "You are specialized in getting candidate resumes and fetch theri data"
     reasoning:
         instructions: ->
-            |   Invoke {!@actions.get_resume_data} with the candidate's name.
-            |   Parse the JSON string {!@actions.get_resume_data.outputs.candidateData}
-            |   Explicitly check the `workExperience` array in the JSON and print every item
-            |
-            |
+            | Invoke {!@actions.Get_Candidate_Data} with the candidates' name.
+            | 
             |
             |
         actions:
-            get_resume_data: @actions.get_resume_data
+            Get_Candidate_Data: @actions.Get_Candidate_Data
                 with searchName = ...
 
 
     actions:
-        get_resume_data:
-            label: "get resume data"
-            description: "This is an apex action that get the candidate data"
+        Get_Candidate_Data:
+            label: "Get Candidate Data"
+            description: "This action can get resumes and candidates data"
             target: "apex://CandidateDataService"
             inputs:
                 searchName: string
                     label: "searchName"
-                    is_required: True
-                    description: "This is the name of candidates and resumes names"
+                    is_required: False
+                    description: "This is the search Name that will search for the candidate in the DB"
             outputs:
                 candidateData: string
                     label: "candidateData"
                     is_displayable: False
                     filter_from_agent: False
-                    description: "This is the output"
+                    description: "This is the output data"
+                candidateId: id
+                    label: "candidateId"
+                    is_displayable: False
+                    filter_from_agent: False
+                    description: "This is the id of the candidates that was fetched, you should memorize them carefully "
                 candidateName: string
                     label: "candidateName"
                     is_displayable: False
                     filter_from_agent: False
-                    description: "This is the names of the candidates output"
+                    description: "This is the names of the candidate that was fetched"
 
-
-subagent listJobs:
-    label: "List Jobs"
-    description: "You are specialized in getting Available jobs to the users"
+subagent job_management:
+    label: "Job Management & Candidate Matching"
+    description: "Specialized in listing available jobs, matching candidates to roles, and managing bookmarking with optional comments."
     reasoning:
         instructions: ->
-            | Invoke
-            |
+            | 1. If the user asks for available jobs or similar queries, invoke `{!@actions.List_Jobs_Action}`.
+            | 2. If the user asks about a job or role whose ID is not in your current context, you MUST first invoke `{!@actions.List_Jobs_Action}` to retrieve and save the job records into your context before proceeding.
+            | 3. If the user asks for the best candidates for a role, ensure you have the job ID (listing jobs first if missing), and then invoke `{!@actions.Find_Best_Candidate}`.
+            | 4. Once a specific candidate is selected from the results, prompt them to bookmark the profile and add an optional comment.
+            | 5. Extract the candidate ID from the previous context (do not use the name) and invoke `{!@actions.Bookmark_Candidate}` with the candidate ID and comment.
+            | 6. if the user asks if the candidate is bookmarked invoke {!@actions.Bookmark_Candidate}
         actions:
             List_Jobs_Action: @actions.List_Jobs_Action
+                with searchFilter = ...
                 set @variables.available_jobs = @outputs.output
-
+            Find_Best_Candidate: @actions.Find_Best_Candidate
+                with jobId = ...
+            Bookmark_Candidate: @actions.Bookmark_Candidate
+                with candidateId = ...
+                with comment = ...
 
     actions:
         List_Jobs_Action:
-            label: "List Jobs Action "
+            label: "List Jobs Action"
             description: "This apex action is responsible to list available Jobs"
             target: "apex://AvailableJobsAction"
             inputs:
                 searchFilter: string
                     label: "searchFilter"
                     is_required: False
-                    description: "This is the name of candidates and resumes names"
+                    description: "Optional filter to search jobs by keyword"
             outputs:
                 output: list[object]
                     label: "output"
@@ -211,27 +221,10 @@ subagent listJobs:
                     is_displayable: False
                     filter_from_agent: False
                     description: "This is the output jobs"
-            
 
-subagent Get_Best_candidates:
-    label: "Get Best candidates"
-    description: |
-
-        After the user select certain job and want to get the best possible match, u should handle it
-    reasoning:
-        instructions: ->
-            |
-        actions:
-            find_best_candidates: @actions.find_best_candidates
-                with jobId = ...
-
-
-    actions:
-        find_best_candidates:
-            label: "find best candidates"
-            description: |
-        
-                This action will enable the user to find the best candidates for job
+        Find_Best_Candidate:
+            label: "Find Best Candidate"
+            description: "This action will enable the user to find the best candidates for a job"
             target: "apex://JobCandidateMatcherAction"
             inputs:
                 jobId: id
@@ -241,7 +234,32 @@ subagent Get_Best_candidates:
             outputs:
                 candidates: list[object]
                     label: "Top Candidates"
-                    description: "List of top 3 matching applications with names and scoring data"
+                    description: "List of top matching applications with names and scoring data"
                     complex_data_type_name: "@apexClassType/c__JobCandidateMatcherAction$CandidateInfo"
+                    is_displayable: False
+                    filter_from_agent: False
+
+        Bookmark_Candidate:
+            label: "Bookmark Candidate"
+            description: "This action will enable the agent to bookmark the candidate and add comments if desired"
+            target: "apex://JobApplicantBookmarkAction"
+            inputs:
+                candidateId: id
+                    label: "Candidate ID"
+                    description: "The candidate ID retrieved from the context history"
+                    is_required: True
+                comment: string
+                    label: "Comment"
+                    description: "The comment provided by the user"
+                    is_required: False
+            outputs:
+                message: string
+                    label: "Message"
+                    description: "Status message for the bookmark operation"
+                    is_displayable: False
+                    filter_from_agent: False
+                success: boolean
+                    label: "Success"
+                    description: "Indicates if the bookmark process succeeded"
                     is_displayable: False
                     filter_from_agent: False
