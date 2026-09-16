@@ -287,6 +287,16 @@
         <field>Job_Application__c.Score__c</field>
         <readable>true</readable>
     </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Job_Application__c.Comment__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Job_Application__c.IsBookmarked__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
 
 
 
@@ -392,6 +402,14 @@
     </classAccesses>
     <classAccesses>
         <apexClass>WorkExperienceTriggerHandler</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>JobApplicantBookmarkAction</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>CandidateJobMatcherAction</apexClass>
         <enabled>true</enabled>
     </classAccesses>
 

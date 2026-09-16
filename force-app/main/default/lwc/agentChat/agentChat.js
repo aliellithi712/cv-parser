@@ -40,7 +40,7 @@ export default class AgentChat extends LightningElement {
                 this.sessionId = sessionData.sessionId;
             }
 
-            const greeting = sessionData?.initialMessage || 'Hello! How can I assist you today?';
+            const greeting = sessionData?.initialMessage?.value || 'Hello! How can I assist you today?';
             this.messages = [
                 {
                     id: 'init-1',
@@ -87,8 +87,9 @@ export default class AgentChat extends LightningElement {
     }
 
     removeAttachment(event) {
-        const docIdToRemove = event.target.dataset.id;
-        this.attachedFiles = this.attachedFiles.filter(f => f.documentId !== docIdToRemove);
+        console.log('Removing attachment with ID:', event.target.dataset.index);
+        const indexToRemove = parseInt(event.target.dataset.index, 10);
+        this.attachedFiles = this.attachedFiles.filter((file, idx) => idx !== indexToRemove);
     }
 
     handleInputChange(event) {
@@ -102,109 +103,114 @@ export default class AgentChat extends LightningElement {
     }
 
     async handleSend() {
-    if (!this.userMessage.trim() && this.attachedFiles.length === 0) {
-        console.warn('No message or attachments to send.');
-        return;
-    } 
+        if (!this.userMessage.trim() && this.attachedFiles.length === 0) {
+            console.warn('No message or attachments to send.');
+            return;
+        } 
 
-    const messageText = this.userMessage;
-    let documentIds = [];
-    if (this.attachedFiles.length > 0) {
-        documentIds = Array.from(new Set(this.attachedFiles.map(file => file.documentId)));
-    }
-
-    const primaryDocId = documentIds.length > 0 ? documentIds[0] : null;
-
-    this.userMessage = '';
-    this.messages = [
-        ...this.messages,
-        {
-            id: Date.now().toString(),
-            sender: 'user',
-            senderClass: 'message-row user',
-            text: messageText,
-            attachments: [...this.attachedFiles],
-            timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-        }
-    ];
-
-    this.isThinking = true;
-    this.scrollToBottom();
-
-    try {
-        if (primaryDocId) {
-            // Call Apex Prompt Parser when attachment exists
-            const result = await parseResumeDirect({ contentDocumentId: primaryDocId });
-            const response = typeof result === 'string' ? JSON.parse(result) : result;
-
-            if (!response?.isSuccess || !response?.agentResponse) {
-                throw new Error(response?.errorMessage || 'Failed to parse resume.');
-            }
-
-            const rawAgentJson = typeof response.agentResponse === 'string' 
-                ? JSON.parse(response.agentResponse) 
-                : response.agentResponse;
-
-            const candidateData = rawAgentJson.candidate || rawAgentJson;
-            console.log('Parsed Candidate Data:', candidateData);
-            
-            // if { "notAResume": true } is returned, show a warning toast and skip saving
-            if (candidateData.notAResume) {
-                this.showToast('Parsing Warning', 'The uploaded document does not appear to be a valid resume.', 'warning');
-                return;
-            }
-
-            const saveResult = await this.autoSaveParsedCandidate(JSON.stringify(candidateData), primaryDocId);
-
-            this.messages = [
-                ...this.messages,
-                {
-                    id: (Date.now() + 1).toString(),
-                    sender: 'agent',
-                    senderClass: 'message-row agent',
-                    text: 'Resume parsed and candidate profile saved successfully!',
-                    timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-                }
-            ];
-        } else {
-            // Call Chat Agent when no attachments exist
-            const result = await sendMessageToAgent({
-                request: {
-                    userMessage: messageText,
-                    agentApiName: this.agentApiName || this.agentId,
-                    sessionId: this.sessionId,
-                    contentDocumentIds: documentIds
-                }
-            });
-
-            if (result?.sessionId) {
-                this.sessionId = result.sessionId;
-            }
-
-            const agentText = result?.agentResponse || 'No response returned from Agentforce.';
-
-            this.messages = [
-                ...this.messages,
-                {
-                    id: (Date.now() + 1).toString(),
-                    sender: 'agent',
-                    senderClass: 'message-row agent',
-                    text: agentText,
-                    timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-                }
-            ];
+        const messageText = this.userMessage;
+        let documentIds = [];
+        if (this.attachedFiles.length > 0) {
+            documentIds = Array.from(new Set(this.attachedFiles.map(file => file.documentId)));
         }
 
-        this.attachedFiles = [];
+        const filesToProcess = [...this.attachedFiles];
 
-    } catch (error) {
-        this.showToast('Error', error?.body?.message || error?.message, 'error');
-    } finally {
-        this.isThinking = false;
+        this.userMessage = '';
+        this.messages = [
+            ...this.messages,
+            {
+                id: Date.now().toString(),
+                sender: 'user',
+                senderClass: 'message-row user',
+                text: messageText,
+                attachments: [...this.attachedFiles],
+                timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+            }
+        ];
+
+        this.isThinking = true;
         this.scrollToBottom();
-    }
-}
 
+        try {
+            // If files are attached, loop through and parse/save each one individually
+            if (filesToProcess.length > 0) {
+                let successCount = 0;
+
+                for (let file of filesToProcess) {
+                    try {
+                        const result = await parseResumeDirect({ contentDocumentId: file.documentId });
+                        const response = typeof result === 'string' ? JSON.parse(result) : result;
+
+                        if (!response?.isSuccess || !response?.agentResponse) {
+                            throw new Error(response?.errorMessage || `Failed to parse resume: ${file.name}`);
+                        }
+
+                        const rawAgentJson = typeof response.agentResponse === 'string' 
+                            ? JSON.parse(response.agentResponse) 
+                            : response.agentResponse;
+
+                        const candidateData = rawAgentJson.candidate || rawAgentJson;
+                        
+                        if (candidateData.notAResume) {
+                            this.showToast('Parsing Warning', `${file.name} does not appear to be a valid resume. Skipped.`, 'warning');
+                            continue;
+                        }
+
+                        await this.autoSaveParsedCandidate(JSON.stringify(candidateData), file.documentId);
+                        successCount++;
+                    } catch (fileErr) {
+                        this.showToast('File Processing Error', `Error processing ${file.name}: ${fileErr?.body?.message || fileErr?.message}`, 'error');
+                    }
+                }
+
+                this.messages = [
+                    ...this.messages,
+                    {
+                        id: (Date.now() + 1).toString(),
+                        sender: 'agent',
+                        senderClass: 'message-row agent',
+                        text: `Successfully parsed and saved ${successCount} out of ${filesToProcess.length} uploaded resume(s)!`,
+                        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+                    }
+                ];
+            } else {
+                const result = await sendMessageToAgent({
+                    request: {
+                        userMessage: messageText,
+                        agentApiName: this.agentApiName || this.agentId,
+                        sessionId: this.sessionId,
+                        contentDocumentIds: documentIds
+                    }
+                });
+
+                if (result?.sessionId) {
+                    this.sessionId = result.sessionId;
+                }
+
+                const agentText = result?.agentResponse || 'No response returned from Agentforce.';
+
+                this.messages = [
+                    ...this.messages,
+                    {
+                        id: (Date.now() + 1).toString(),
+                        sender: 'agent',
+                        senderClass: 'message-row agent',
+                        text: agentText,
+                        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+                    }
+                ];
+            }
+
+            this.attachedFiles = [];
+
+        } catch (error) {
+            this.showToast('Error', error?.body?.message || error?.message, 'error');
+        } finally {
+            this.isThinking = false;
+            this.scrollToBottom();
+        }
+    }
 
     async autoSaveParsedCandidate(rawJson, documentId) {
         try {
