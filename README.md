@@ -51,6 +51,7 @@ The Candidate Card is built from the following Salesforce objects:
 - **Work Experience** – Stores the candidate's professional experience.
 - **Job** – Stores available job roles and their requirements.
 - **Job Application** – Stores the candidate's job application, score, and evaluation results.
+- **Job Scoring Config** – Defines the scoring criteria and weights used to evaluate candidates against a job, including skill, achievement, experience, and education weights.
 
 
 ### **Key Design Decisions and Trade-offs**
@@ -63,6 +64,8 @@ The Candidate Card is built from the following Salesforce objects:
 - **Prompt Template for Resume Extraction** – Prompt Templates are used to extract structured information from uploaded resumes. The Agentforce agent is not invoked for resume extraction to make the process more deterministic and avoid unnecessary agent reasoning.
 
 - **Apex for Deterministic Processing** – Candidate matching and scoring are handled by Apex to ensure consistent and repeatable results.
+
+- **Configurable Scoring Criteria** – Job Scoring Config allows the scoring criteria and weights to be configured per job, making the scoring process flexible without changing the Apex scoring logic.
 
 - **Job Requirements from Description** – Job requirements are provided as natural-language job descriptions. A Prompt Template converts the description into structured JSON and stores it in a field on the Job record. it introduces a trade-off because the extracted structure may be less deterministic than manually maintained structured fields.
 
