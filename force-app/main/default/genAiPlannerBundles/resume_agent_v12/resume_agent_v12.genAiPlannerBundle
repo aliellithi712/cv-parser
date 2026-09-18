@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<GenAiPlannerBundle xmlns="http://soap.sforce.com/2006/04/metadata">
+    <description>Deliver personalized customer interactions with an autonomous AI agent. Agentforce Service Agent intelligently supports your customers with common inquiries and escalates complex issues.</description>
+    <localTopicLinks>
+        <genAiPluginName>CVQuery_16jg50000016xHl</genAiPluginName>
+    </localTopicLinks>
+    <localTopicLinks>
+        <genAiPluginName>agent_router_16jg50000016xHl</genAiPluginName>
+    </localTopicLinks>
+    <localTopicLinks>
+        <genAiPluginName>ambiguous_question_16jg50000016xHl</genAiPluginName>
+    </localTopicLinks>
+    <localTopicLinks>
+        <genAiPluginName>job_management_16jg50000016xHl</genAiPluginName>
+    </localTopicLinks>
+    <localTopicLinks>
+        <genAiPluginName>off_topic_16jg50000016xHl</genAiPluginName>
+    </localTopicLinks>
+    <localTopics>
+        <fullName>off_topic_16jg50000016xHl</fullName>
+        <canEscalate>false</canEscalate>
+        <description>Redirect conversation to relevant topics when user request goes off-topic</description>
+        <developerName>off_topic_16jg50000016xHl</developerName>
+        <genAiPluginInstructions>
+            <description>You are an AI Agent.</description>
+            <developerName>instruction0_179g5000001gYmH</developerName>
+            <language>en_US</language>
+            <masterLabel>instruction0_179g5000001gYmH</masterLabel>
+            <sortOrder>1</sortOrder>
+        </genAiPluginInstructions>
+        <language>en_US</language>
+        <localDeveloperName>off_topic</localDeveloperName>
+        <masterLabel>Off Topic</masterLabel>
+        <pluginType>Topic</pluginType>
+    </localTopics>
+    <localTopics>
+        <fullName>job_management_16jg50000016xHl</fullName>
+        <canEscalate>false</canEscalate>
+        <description>Specialized in listing available jobs, matching candidates to roles, and managing bookmarking with optional comments.</description>
+        <developerName>job_management_16jg50000016xHl</developerName>
+        <genAiPluginInstructions>
+            <description>You are an AI Agent.</description>
+            <developerName>instruction0_179g5000001gYmJ</developerName>
+            <language>en_US</language>
+            <masterLabel>instruction0_179g5000001gYmJ</masterLabel>
+            <sortOrder>1</sortOrder>
+        </genAiPluginInstructions>
+        <language>en_US</language>
+        <localActionLinks>
+            <functionName>Find_Best_Candidate_179g5000001gYmJ</functionName>
+        </localActionLinks>
+        <localActionLinks>
+            <functionName>Bookmark_Candidate_179g5000001gYmJ</functionName>
+        </localActionLinks>
+        <localActionLinks>
+            <functionName>List_Jobs_Action_179g5000001gYmJ</functionName>
+        </localActionLinks>
+        <localActions>
+            <fullName>Find_Best_Candidate_179g5000001gYmJ</fullName>
+            <description>This action will enable the user to find the best candidates for a job</description>
+            <developerName>Find_Best_Candidate_179g5000001gYmJ</developerName>
+            <invocationTarget>JobCandidateMatcherAction</invocationTarget>
+            <invocationTargetType>apex</invocationTargetType>
+            <isConfirmationRequired>false</isConfirmationRequired>
+            <isIncludeInProgressIndicator>false</isIncludeInProgressIndicator>
+            <localDeveloperName>Find_Best_Candidate</localDeveloperName>
+            <masterLabel>Find Best Candidate</masterLabel>
+        </localActions>
+        <localActions>
+            <fullName>List_Jobs_Action_179g5000001gYmJ</fullName>
+            <description>This apex action is responsible to list available Jobs</description>
+            <developerName>List_Jobs_Action_179g5000001gYmJ</developerName>
+            <invocationTarget>AvailableJobsAction</invocationTarget>
+            <invocationTargetType>apex</invocationTargetType>
+            <isConfirmationRequired>false</isConfirmationRequired>
+            <isIncludeInProgressIndicator>false</isIncludeInProgressIndicator>
+            <localDeveloperName>List_Jobs_Action</localDeveloperName>
+            <masterLabel>List Jobs Action</masterLabel>
+        </localActions>
+        <localActions>
+            <fullName>Bookmark_Candidate_179g5000001gYmJ</fullName>
+            <description>This action will enable the agent:
+1. check the bookmark of a candidate 
+2. add a comment to already bookmarked candidate
+3. bookmarked a candidate with added comment</description>
+            <developerName>Bookmark_Candidate_179g5000001gYmJ</developerName>
+            <invocationTarget>JobApplicantBookmarkAction</invocationTarget>
+            <invocationTargetType>apex</invocationTargetType>
+            <isConfirmationRequired>false</isConfirmationRequired>
+            <isIncludeInProgressIndicator>false</isIncludeInProgressIndicator>
+            <localDeveloperName>Bookmark_Candidate</localDeveloperName>
+            <masterLabel>Bookmark Candidate</masterLabel>
+        </localActions>
+        <localDeveloperName>job_management</localDeveloperName>
+        <masterLabel>Job Management &amp; Candidate Matching</masterLabel>
+        <pluginType>Topic</pluginType>
+    </localTopics>
+    <localTopics>
+        <fullName>ambiguous_question_16jg50000016xHl</fullName>
+        <canEscalate>false</canEscalate>
+        <description>Redirect conversation to relevant topics when user request is too ambiguous</description>
+        <developerName>ambiguous_question_16jg50000016xHl</developerName>
+        <genAiPluginInstructions>
+            <description>You are an AI Agent.</description>
+            <developerName>instruction0_179g5000001gYmI</developerName>
+            <language>en_US</language>
+            <masterLabel>instruction0_179g5000001gYmI</masterLabel>
+            <sortOrder>1</sortOrder>
+        </genAiPluginInstructions>
+        <language>en_US</language>
+        <localDeveloperName>ambiguous_question</localDeveloperName>
+        <masterLabel>Ambiguous Question</masterLabel>
+        <pluginType>Topic</pluginType>
+    </localTopics>
+    <localTopics>
+        <fullName>CVQuery_16jg50000016xHl</fullName>
+        <canEscalate>false</canEscalate>
+        <description>You are specialized in getting candidate resumes and fetch theri data</description>
+        <developerName>CVQuery_16jg50000016xHl</developerName>
+        <genAiPluginInstructions>
+            <description>You are an AI Agent.</description>
+            <developerName>instruction0_179g5000001gYmL</developerName>
+            <language>en_US</language>
+            <masterLabel>instruction0_179g5000001gYmL</masterLabel>
+            <sortOrder>1</sortOrder>
+        </genAiPluginInstructions>
+        <language>en_US</language>
+        <localActionLinks>
+            <functionName>Get_Candidate_Data_179g5000001gYmL</functionName>
+        </localActionLinks>
+        <localActions>
+            <fullName>Get_Candidate_Data_179g5000001gYmL</fullName>
+            <description>This action will get candidates data</description>
+            <developerName>Get_Candidate_Data_179g5000001gYmL</developerName>
+            <invocationTarget>CandidateDataService</invocationTarget>
+            <invocationTargetType>apex</invocationTargetType>
+            <isConfirmationRequired>false</isConfirmationRequired>
+            <isIncludeInProgressIndicator>false</isIncludeInProgressIndicator>
+            <localDeveloperName>Get_Candidate_Data</localDeveloperName>
+            <masterLabel>Get Candidate Data</masterLabel>
+        </localActions>
+        <localDeveloperName>CVQuery</localDeveloperName>
+        <masterLabel>CV Query</masterLabel>
+        <pluginType>Topic</pluginType>
+    </localTopics>
+    <localTopics>
+        <fullName>agent_router_16jg50000016xHl</fullName>
+        <canEscalate>false</canEscalate>
+        <description>Welcome the user and determine the appropriate subagent based on user input</description>
+        <developerName>agent_router_16jg50000016xHl</developerName>
+        <genAiPluginInstructions>
+            <description>You are an AI Agent.
+
+{{state.AgentScriptInternal_agent_instructions}}</description>
+            <developerName>instruction0_179g5000001gYmK</developerName>
+            <language>en_US</language>
+            <masterLabel>instruction0_179g5000001gYmK</masterLabel>
+            <sortOrder>1</sortOrder>
+        </genAiPluginInstructions>
+        <language>en_US</language>
+        <localDeveloperName>agent_router</localDeveloperName>
+        <masterLabel>Agent Router</masterLabel>
+        <pluginType>Topic</pluginType>
+    </localTopics>
+    <masterLabel>resume agent</masterLabel>
+    <plannerType>Atlas__ConcurrentMultiAgentOrchestration</plannerType>
+</GenAiPlannerBundle>

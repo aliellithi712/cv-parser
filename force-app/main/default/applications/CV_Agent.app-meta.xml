@@ -7,12 +7,14 @@
     <formFactors>Small</formFactors>
     <formFactors>Large</formFactors>
     <isNavAutoTempTabsDisabled>false</isNavAutoTempTabsDisabled>
-    <isNavPersonalizationDisabled>false</isNavPersonalizationDisabled>
+    <isNavPersonalizationDisabled>falsce</isNavPersonalizationDisabled>
     <isNavTabPersistenceDisabled>false</isNavTabPersistenceDisabled>
     <isOmniPinnedViewEnabled>false</isOmniPinnedViewEnabled>
     <label>CV Agent</label>
     <navType>Standard</navType>
     <tabs>Agent</tabs>
+    <tabs>candidate__c</tabs>
+    <tabs>job__c</tabs>
     <uiType>Lightning</uiType>
     <utilityBar>CV_Agent_UtilityBar</utilityBar>
 </CustomApplication>

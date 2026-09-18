@@ -1,0 +1,94 @@
+{
+  "unevaluatedProperties" : false,
+  "properties" : {
+    "achievements" : {
+      "title" : "achievements",
+      "description" : "This is the achievements of the output candidates",
+      "maxItems" : 2000,
+      "items" : {
+        "lightning:type" : "lightning__textType"
+      },
+      "lightning:type" : "lightning__listType",
+      "lightning:isPII" : false,
+      "copilotAction:isDisplayable" : false,
+      "copilotAction:isUsedByPlanner" : true
+    },
+    "candidateHyperlink" : {
+      "title" : "candidateHyperlink",
+      "description" : "This is the link of the candidate record",
+      "lightning:type" : "lightning__textType",
+      "lightning:isPII" : false,
+      "copilotAction:isDisplayable" : false,
+      "copilotAction:isUsedByPlanner" : true
+    },
+    "candidateId" : {
+      "title" : "candidateId",
+      "description" : "This is the id of the output candidates; this must be saved carefully in context so it will be used afterwards",
+      "lightning:type" : "lightning__recordIdType",
+      "lightning:isPII" : false,
+      "copilotAction:isDisplayable" : false,
+      "copilotAction:isUsedByPlanner" : true
+    },
+    "candidateName" : {
+      "title" : "candidateName",
+      "description" : "This is the candidate's name, this should be saved carefully to the context and attached to the id so it will be used afterwards",
+      "lightning:type" : "lightning__textType",
+      "lightning:isPII" : false,
+      "copilotAction:isDisplayable" : false,
+      "copilotAction:isUsedByPlanner" : true
+    },
+    "education" : {
+      "title" : "education",
+      "description" : "This is the education of the output candidates",
+      "maxItems" : 2000,
+      "items" : {
+        "lightning:type" : "lightning__textType"
+      },
+      "lightning:type" : "lightning__listType",
+      "lightning:isPII" : false,
+      "copilotAction:isDisplayable" : false,
+      "copilotAction:isUsedByPlanner" : true
+    },
+    "experienceYears" : {
+      "title" : "experienceYears",
+      "description" : "This is the experience years of the output candidates",
+      "lightning:type" : "lightning__numberType",
+      "lightning:isPII" : false,
+      "copilotAction:isDisplayable" : false,
+      "copilotAction:isUsedByPlanner" : true
+    },
+    "role" : {
+      "title" : "role",
+      "description" : "This is the roles that the output candidates can occupy",
+      "lightning:type" : "lightning__textType",
+      "lightning:isPII" : false,
+      "copilotAction:isDisplayable" : false,
+      "copilotAction:isUsedByPlanner" : true
+    },
+    "skills" : {
+      "title" : "skills",
+      "description" : "This is the skills that the output candidates posses",
+      "maxItems" : 2000,
+      "items" : {
+        "lightning:type" : "lightning__textType"
+      },
+      "lightning:type" : "lightning__listType",
+      "lightning:isPII" : false,
+      "copilotAction:isDisplayable" : false,
+      "copilotAction:isUsedByPlanner" : true
+    },
+    "workExperience" : {
+      "title" : "workExperience",
+      "description" : "This is the past experience that the output candidates posses ",
+      "maxItems" : 2000,
+      "items" : {
+        "lightning:type" : "lightning__textType"
+      },
+      "lightning:type" : "lightning__listType",
+      "lightning:isPII" : false,
+      "copilotAction:isDisplayable" : false,
+      "copilotAction:isUsedByPlanner" : true
+    }
+  },
+  "lightning:type" : "lightning__objectType"
+}

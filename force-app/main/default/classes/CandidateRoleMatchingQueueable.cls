@@ -15,6 +15,14 @@ public class CandidateRoleMatchingQueueable implements Queueable {
             WHERE Id IN :candidateIds
         ];
 
+        // if candidate has job application quit the execute 
+        for (Candidate__c cand : candidates) {
+            if ([SELECT COUNT() FROM Job_Application__c WHERE Candidate__c = :cand.Id] > 0) {
+                return;
+            }
+        }
+
+
         // Group candidates by role
         Map<String, Set<Id>> roleToCandidateIds =
             new Map<String, Set<Id>>();
@@ -73,6 +81,7 @@ public class CandidateRoleMatchingQueueable implements Queueable {
                  roleToCandidateIds.get(cleanJobRole)) {
 
                 if (!candidateToJobIdsMap.containsKey(candidateId)) {
+                    System.debug('Adding candidateId to candidateToJobIdsMap: ' + candidateId);
                     candidateToJobIdsMap.put(
                         candidateId,
                         new List<Id>()

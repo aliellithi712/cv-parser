@@ -7,6 +7,9 @@ public with sharing class CandidateDataService {
 
     public class CandidateResponse {
         @InvocableVariable
+        public String candidateHyperlink; // Preformatted Markdown link for Agentforce
+
+        @InvocableVariable
         public Id candidateId;
 
         @InvocableVariable
@@ -167,6 +170,20 @@ public with sharing class CandidateDataService {
                 educationText += record.Institution__c;
             }
 
+            if (record.Start_Date__c != null) {
+                if (educationText != '') {
+                    educationText += ' - ';
+                }
+                educationText += record.Start_Date__c.format();
+            }
+
+            if (record.End_Date__c != null) {
+                if (educationText != '') {
+                    educationText += ' - ';
+                }
+                educationText += record.End_Date__c.format();
+            }
+
             if (educationText != '') {
                 candidateEducation
                     .get(record.Candidate__c)
@@ -175,25 +192,19 @@ public with sharing class CandidateDataService {
         }
 
         // Work Experience
-        Map<Id, List<String>> candidateWorkExperience =
-            new Map<Id, List<String>>();
+        Map<Id, List<String>> candidateWorkExperience = new Map<Id, List<String>>();
 
         for (Work_Experience__c record : [
-            SELECT Candidate__c,
-                   Name
+            SELECT Candidate__c, Job_Title__c, Description__c, Start_Date__c, End_Date__c
             FROM Work_Experience__c
             WHERE Candidate__c IN :candidateIds
         ]) {
             if (!candidateWorkExperience.containsKey(record.Candidate__c)) {
-                candidateWorkExperience.put(
-                    record.Candidate__c,
-                    new List<String>()
-                );
+                candidateWorkExperience.put(record.Candidate__c, new List<String>());
             }
-
-            candidateWorkExperience
-                .get(record.Candidate__c)
-                .add(record.Name);
+            
+            String formattedExp = record.Job_Title__c + ' (' + record.Start_Date__c + ' to ' + record.End_Date__c + '): ' + record.Description__c;
+            candidateWorkExperience.get(record.Candidate__c).add(formattedExp);
         }
 
         // Build response
@@ -210,6 +221,13 @@ public with sharing class CandidateDataService {
             response.role = candidate.Role__c;
             response.experienceYears =
                 candidate.Experience_Years__c;
+
+            // Generate absolute Markdown link directly in Apex to prevent builder/redaction path errors
+            // String to get current org instance URL
+            // String orgUrl = System.Url.getOrgDomainUrl().toExternalForm();
+            String orgUrl = System.Url.getOrgDomainUrl().toExternalForm();
+            response.candidateHyperlink = '<a href="https://orgfarm-e307e8ad28-dev-ed.develop.lightning.force.com/lightning/r/Candidate__c/' + candidate.Id + '/view" target="_blank">View Record</a>';
+            // response.candidateHyperlink = '[View Record](' + orgUrl + '/lightning/r/Candidate__c/' + candidate.Id + '/view)';
 
             response.skills =
                 candidateSkills.containsKey(candidate.Id)

@@ -4,6 +4,11 @@ trigger EducationTrigger on Education__c (
     after delete,
     after undelete
 ) {
+
+    if (!TriggerControl.runJunctionTrigger) {
+        return;
+    }
+    
     Set<Id> candidateIds = new Set<Id>();
 
     if (Trigger.isDelete) {

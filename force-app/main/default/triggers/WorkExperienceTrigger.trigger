@@ -18,6 +18,10 @@ trigger WorkExperienceTrigger on Work_Experience__c (
             );
         }
 
+        if (!TriggerControl.runJunctionTrigger) {
+            return;
+        }
+
         // Call scoring/matching after experience update
         Set<Id> candidateIds = new Set<Id>();
 

@@ -62,6 +62,9 @@ variables:
     available_jobs: mutable object
         description: "This is available jobs and it will be used if the agent need to find most optimal candidates to that job"
         label: "available jobs"
+    candidate_id: mutable string
+        description: "candidate id"
+        label: "candidate id"
 
 language:
     additional_locales: "en_GB"
@@ -91,7 +94,8 @@ start_agent agent_router:
             | 7. if the user asks for available jobs, go to {!@actions.go_to_list_jobs}
             | If the user asks to parse a CV, analyze a resume, or evaluate a candidate, BUT @variables.contentDocId is null or empty:
             | DO NOT transition to @subagent.CVIngestionAndStructuring. Ask the user directly to upload or attach their CV document (PDF/DOC) to proceed.
-            |
+            | Always return full, clickable URLs for the approved domains
+            | Do not redact or modify approved URLs
         actions:
             go_to_list_jobs: @utils.transition to @subagent.CVQuery
             go_to_cv_parser: @utils.transition to @subagent.job_management
@@ -147,41 +151,80 @@ subagent CVQuery:
     description: "You are specialized in getting candidate resumes and fetch theri data"
     reasoning:
         instructions: ->
-            | Invoke {!@actions.Get_Candidate_Data} with the candidates' name.
-            | 
-            |
-            |
+            |Invoke {!@actions.Get_Candidate_Data} with the candidates' name.
+             - #DisableURLRedaction#
+             - CRITICAL INSTRUCTION: Output the HTML anchor tag verbatim from the action output
+                {!@actions.Get_Candidate_Data.outputs.candidateHyperlink}
+                
+            
         actions:
             Get_Candidate_Data: @actions.Get_Candidate_Data
                 with searchName = ...
-
-
+                set @outputs.candidateHyperlink = @variables.candidate_id
     actions:
         Get_Candidate_Data:
             label: "Get Candidate Data"
-            description: "This action can get resumes and candidates data"
+            description: "This action will get candidates data"
             target: "apex://CandidateDataService"
             inputs:
                 searchName: string
                     label: "searchName"
                     is_required: False
-                    description: "This is the search Name that will search for the candidate in the DB"
+                    description: |This is the name of the candidates that need to be searched for their data
+                
             outputs:
-                candidateData: string
-                    label: "candidateData"
+                achievements: list[string]
+                    label: "achievements"
                     is_displayable: False
                     filter_from_agent: False
-                    description: "This is the output data"
+                    description: |This is the achievements of the output candidates 
+                
+                candidateHyperlink: string
+                    label: "candidateHyperlink"
+                    is_displayable: False
+                    filter_from_agent: False
+                    description: "This is the link of the candidate record"
                 candidateId: id
                     label: "candidateId"
                     is_displayable: False
                     filter_from_agent: False
-                    description: "This is the id of the candidates that was fetched, you should memorize them carefully "
+                    description: |This is the id of the output candidates; this must be saved carefully in context so it will be used afterwards 
+                
                 candidateName: string
                     label: "candidateName"
                     is_displayable: False
                     filter_from_agent: False
-                    description: "This is the names of the candidate that was fetched"
+                    description: |This is the candidate's name, this should be saved carefully to the context and attached to the id so it will be used afterwards 
+                
+                education: list[string]
+                    label: "education"
+                    is_displayable: False
+                    filter_from_agent: False
+                    description: |This is the education of the output candidates
+                
+                experienceYears: number
+                    label: "experienceYears"
+                    is_displayable: False
+                    filter_from_agent: False
+                    description: |This is the experience years of the output candidates
+                
+                role: string
+                    label: "role"
+                    is_displayable: False
+                    filter_from_agent: False
+                    description: |This is the roles that the output candidates can occupy
+                
+                skills: list[string]
+                    label: "skills"
+                    is_displayable: False
+                    filter_from_agent: False
+                    description: |This is the skills that the output candidates posses
+                
+                workExperience: list[string]
+                    label: "workExperience"
+                    is_displayable: False
+                    filter_from_agent: False
+                    description: "This is the past experience that the output candidates posses "
 
 subagent job_management:
     label: "Job Management & Candidate Matching"
@@ -201,8 +244,10 @@ subagent job_management:
             Find_Best_Candidate: @actions.Find_Best_Candidate
                 with jobId = ...
             Bookmark_Candidate: @actions.Bookmark_Candidate
+                with action = ...
                 with candidateId = ...
                 with comment = ...
+
 
     actions:
         List_Jobs_Action:
@@ -221,7 +266,6 @@ subagent job_management:
                     is_displayable: False
                     filter_from_agent: False
                     description: "This is the output jobs"
-
         Find_Best_Candidate:
             label: "Find Best Candidate"
             description: "This action will enable the user to find the best candidates for a job"
@@ -238,28 +282,42 @@ subagent job_management:
                     complex_data_type_name: "@apexClassType/c__JobCandidateMatcherAction$CandidateInfo"
                     is_displayable: False
                     filter_from_agent: False
-
         Bookmark_Candidate:
             label: "Bookmark Candidate"
-            description: "This action will enable the agent to bookmark the candidate and add comments if desired"
+            description: |This action will enable the agent:
+                          1. check the bookmark of a candidate 
+                          2. add a comment to already bookmarked candidate
+                          3. bookmarked a candidate with added comment
             target: "apex://JobApplicantBookmarkAction"
             inputs:
+                action: string
+                    label: "Action (Check, Bookmark, UpdateComment)"
+                    is_required: True
+                    description: |This action should be one of those:
+                                  "check" - will check of a candidate is already bookmarked
+                                  "bookmark" - will bookmark new candidate with optional comment to attach to it
+                                  "updatecomment" - this will add comment to already bookmarked candidate 
                 candidateId: id
                     label: "Candidate ID"
-                    description: "The candidate ID retrieved from the context history"
                     is_required: True
+                    description: "This will be the candidate id and it is required to run that action"
                 comment: string
                     label: "Comment"
-                    description: "The comment provided by the user"
-                    is_required: False
+                    is_required: True
+                    description: "This is the comment that will be attached to the bookmarked candidate"
             outputs:
+                isBookmarked: boolean
+                    label: "Is Bookmarked"
+                    is_displayable: False
+                    filter_from_agent: False
+                    description: "This output will determine if the candidate is bookmarked or not"
                 message: string
                     label: "Message"
-                    description: "Status message for the bookmark operation"
                     is_displayable: False
                     filter_from_agent: False
+                    description: "This is the output message that u should paraphrase and give to the user"
                 success: boolean
                     label: "Success"
-                    description: "Indicates if the bookmark process succeeded"
                     is_displayable: False
                     filter_from_agent: False
+                    description: "This is the success state of that action"

@@ -4,6 +4,7 @@ trigger CandidateTrigger on Candidate__c (after insert) {
         for (Candidate__c cand : Trigger.new) {
             candidateIds.add(cand.Id);
         }
+        TriggerControl.runJunctionTrigger = false;
         System.enqueueJob(new CandidateRoleMatchingQueueable(candidateIds));
     }
 }

@@ -16,7 +16,8 @@
                                 </div>
                             </template>
 
-                            <p class="chat-text">{msg.text}</p>
+                            <!-- <p class="chat-text" style="white-space: pre-wrap;">{msg.text}</p> -->
+                            <lightning-formatted-rich-text style="white-space: pre-wrap;" value={msg.text}></lightning-formatted-rich-text>
                             <span class="chat-time">{msg.timestamp}</span>
                         </div>
                     </div>

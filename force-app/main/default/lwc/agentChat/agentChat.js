@@ -189,6 +189,7 @@ export default class AgentChat extends LightningElement {
                 }
 
                 const agentText = result?.agentResponse || 'No response returned from Agentforce.';
+                console.log('Agent Response:', result);
 
                 this.messages = [
                     ...this.messages,

@@ -118,12 +118,10 @@ public with sharing class AgentController {
             }
             
 
-            system.debug('Invoking Agentforce with parameters: ' + action);
-
             List<Invocable.Action.Result> results = action.invoke();
+            System.debug('Agentforce invocation results: ' + results);
             Invocable.Action.Result result = results[0];
             String agentResponse = (String) result.getOutputParameters().get('agentResponse');
-            System.debug('Agent Response: ' + agentResponse);
             String rawAgentResponse = (String) result.getOutputParameters().get('agentResponse');
 
             if (String.isNotBlank(rawAgentResponse)) {

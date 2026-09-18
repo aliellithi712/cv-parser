@@ -1,0 +1,28 @@
+{
+  "required" : [ "action", "candidateId", "comment" ],
+  "unevaluatedProperties" : false,
+  "properties" : {
+    "action" : {
+      "title" : "Action (Check, Bookmark, UpdateComment)",
+      "description" : "This action should be one of those:\n\"check\" - will check of a candidate is already bookmarked\n\"bookmark\" - will bookmark new candidate with optional comment to attach to it\n\"updatecomment\" - this will add comment to already bookmarked candidate",
+      "lightning:type" : "lightning__textType",
+      "lightning:isPII" : false,
+      "copilotAction:isUserInput" : false
+    },
+    "candidateId" : {
+      "title" : "Candidate ID",
+      "description" : "This will be the candidate id and it is required to run that action",
+      "lightning:type" : "lightning__recordIdType",
+      "lightning:isPII" : false,
+      "copilotAction:isUserInput" : false
+    },
+    "comment" : {
+      "title" : "Comment",
+      "description" : "This is the comment that will be attached to the bookmarked candidate",
+      "lightning:type" : "lightning__textType",
+      "lightning:isPII" : false,
+      "copilotAction:isUserInput" : false
+    }
+  },
+  "lightning:type" : "lightning__objectType"
+}
