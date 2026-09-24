@@ -6,5 +6,5 @@
     <relationshipLabel>Education</relationshipLabel>
     <relationshipName>Education</relationshipName>
     <required>false</required>
-    <type>Lookup</type>
+    <type>MasterDetail</type>
 </CustomField>

@@ -6,6 +6,9 @@ Resume Agent is a Salesforce and Agentforce-powered recruitment solution that ca
 
 The agent helps recruiters identify candidates that match the requirements of a given job based on skills, experience, education, achievements, and other relevant resume information.
 
+This repository utilizes a React and Express application to parse resumes, forward them to the current parser, and process the results using the CandidateDataGraphBatch Apex class.
+* **GitHub Repository:** [cv-parser-datacloud](https://github.com/aliellithi712/cv-parser-datacloud)
+
 ## **Architecture Overview**
 
 The Resume Agent is built using Salesforce, Agentforce, LWC, Apex, and Salesforce custom objects.

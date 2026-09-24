@@ -168,6 +168,11 @@
         <field>Candidate__c.Role__c</field>
         <readable>true</readable>
     </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Candidate__c.External_Id__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
 
 
     <fieldPermissions>
@@ -195,11 +200,11 @@
         <field>Work_Experience__c.Company__c</field>
         <readable>true</readable>
     </fieldPermissions>
-    <fieldPermissions>
+    <!-- <fieldPermissions>
         <editable>true</editable>
         <field>Work_Experience__c.Candidate__c</field>
         <readable>true</readable>
-    </fieldPermissions>
+    </fieldPermissions> -->
 
 
 
@@ -228,11 +233,11 @@
         <field>Education__c.Degree__c</field>
         <readable>true</readable>
     </fieldPermissions>
-    <fieldPermissions>
+    <!-- <fieldPermissions>
         <editable>true</editable>
         <field>Education__c.Candidate__c</field>
         <readable>true</readable>
-    </fieldPermissions>
+    </fieldPermissions> -->
 
 
 
@@ -241,6 +246,7 @@
         <field>Candidate_Skill__c.Skill__c</field>
         <readable>true</readable>
     </fieldPermissions>
+    
 
 
     <fieldPermissions>
@@ -248,6 +254,13 @@
         <field>Skill__c.Description__c</field>
         <readable>true</readable>
     </fieldPermissions>
+
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Skill__c.External_Id__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+
 
 
     <fieldPermissions>
@@ -323,6 +336,21 @@
         <field>Job_Scoring_Config__c.Skill_Weight__c</field>
         <readable>true</readable>
     </fieldPermissions>
+
+
+
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Achievement__c.External_Id__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Achievement__c.Description__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+
+
     <!-- 
 
     <fieldPermissions>
