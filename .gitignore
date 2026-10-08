@@ -6,6 +6,9 @@
 **/.vscode/
 **/.husky/
 **/.config/
+**/config/
+**/hardis-report/
+
 
 
 .env.local
