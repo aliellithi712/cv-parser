@@ -6,7 +6,7 @@
 **/.vscode/
 **/.husky/
 **/.config/
-
+**/.jwt/
 
 .env.local
 .prettierignore
